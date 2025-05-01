@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ethers } from "ethers";
 import contractABI from "./contract/CharityDonation.json";
 import { CONTRACT_ADDRESS } from "./contract/contractAddress.js";
+import "./App.css";
 
 function App() {
   const [provider, setProvider] = useState(null);
@@ -53,15 +54,51 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Charity Donation DApp</h1>
-      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Amount in ETH" />
-      <button onClick={donate}>Donate</button>
-      <h2>All Donations</h2>
-      <ul>
-        {donations.map((d, idx) => (
-          <li key={idx}>{d.donor} - {d.amount} ETH</li>
-        ))}
-      </ul>
+      <header>
+        <h1>Charity Donation DApp</h1>
+        <p>Support a cause by donating ETH on the blockchain!</p>
+      </header>
+
+      <main>
+        <section>
+          <h2>Make a Donation</h2>
+          <input
+            type="number"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="Amount in ETH"
+          />
+          <button onClick={donate}>Donate</button>
+        </section>
+
+        <section>
+          <h2>Total Donations</h2>
+          <p>
+            <strong>
+              {donations.reduce((total, d) => total + parseFloat(d.amount), 0).toFixed(2)} ETH
+            </strong>
+          </p>
+        </section>
+
+        <section>
+          <h2>All Donations</h2>
+          {donations.length > 0 ? (
+            <ul>
+              {donations.map((d, idx) => (
+                <li key={idx}>
+                  <strong>Donor:</strong> {d.donor} - <strong>Amount:</strong> {d.amount} ETH
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No donations yet. Be the first to donate!</p>
+          )}
+        </section>
+      </main>
+
+      <footer>
+        <p>Powered by Ethereum Blockchain | Built with ❤️ by Charity Donation App</p>
+      </footer>
     </div>
   );
 }
