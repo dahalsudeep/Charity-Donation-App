@@ -1,25 +1,60 @@
-import logo from './logo.svg';
-import './App.css';
+
+import { useEffect, useState } from "react";
+import { ethers } from "ethers";
+import contractABI from "./contract/CharityDonation.json";
+import { CONTRACT_ADDRESS } from "./contract/contractAddress";
 
 function App() {
+  const [provider, setProvider] = useState(null);
+  const [signer, setSigner] = useState(null);
+  const [contract, setContract] = useState(null);
+  const [amount, setAmount] = useState("");
+  const [donations, setDonations] = useState([]);
+
+  useEffect(() => {
+    const init = async () => {
+      if (window.ethereum) {
+        const provider = new ethers.BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+        const contract = new ethers.Contract(CONTRACT_ADDRESS, contractABI.abi, signer);
+        setProvider(provider);
+        setSigner(signer);
+        setContract(contract);
+        loadDonations(contract);
+      } else {
+        alert("Please install MetaMask!");
+      }
+    };
+    init();
+  }, []);
+
+  const donate = async () => {
+    if (!amount || !contract) return;
+    const tx = await contract.donate({ value: ethers.parseEther(amount) });
+    await tx.wait();
+    loadDonations(contract);
+    setAmount("");
+  };
+
+  const loadDonations = async (contract) => {
+    const donations = await contract.getDonations();
+    setDonations(donations.map((d) => ({ donor: d.donor, amount: ethers.formatEther(d.amount) })));
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Charity Donation DApp</h1>
+      <input value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Amount in ETH" />
+      <button onClick={donate}>Donate</button>
+      <h2>All Donations</h2>
+      <ul>
+        {donations.map((d, idx) => (
+          <li key={idx}>{d.donor} - {d.amount} ETH</li>
+        ))}
+      </ul>
     </div>
   );
 }
 
 export default App;
+
