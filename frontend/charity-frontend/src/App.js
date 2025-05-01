@@ -5,6 +5,17 @@ import contractABI from "./contract/CharityDonation.json";
 import { CONTRACT_ADDRESS } from "./contract/contractAddress.js";
 import "./App.css";
 
+import { JsonRpcProvider } from 'ethers';
+
+// Connect to the Ethereum network
+const provider = new JsonRpcProvider("https://eth-sepolia.g.alchemy.com/v2/Im8tgIEiAH94_X33F1Ryo5BMtLb-wbXE");
+
+// Get block by number
+const blockNumber = "latest";
+const block = await provider.getBlock(blockNumber);
+
+console.log(block);
+
 function App() {
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
