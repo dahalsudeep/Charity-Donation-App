@@ -1,8 +1,8 @@
 
 import { useEffect, useState } from "react";
 import { ethers } from "ethers";
-import contractABI from "./frontend/contract/CharityDonation.json";
-import { CONTRACT_ADDRESS } from "./frontend/contract/contractAddress";
+import contractABI from "./contract/CharityDonation.json";
+import { CONTRACT_ADDRESS } from "./contract/contractAddress.js";
 
 function App() {
   const [provider, setProvider] = useState(null);
